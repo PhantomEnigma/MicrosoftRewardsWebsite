@@ -1,0 +1,41 @@
+name: Build Flutter APK
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.7'
+
+      - name: Install dependencies
+        working-directory: microsoft_rewards_app
+        run: flutter pub get
+
+      - name: Analyze code
+        working-directory: microsoft_rewards_app
+        run: flutter analyze || true
+
+      - name: Build APKs for ARMv7 and ARM64
+        working-directory: microsoft_rewards_app
+        run: flutter build apk --split-per-abi --debug
+
+      - name: Upload APKs as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: microsoft_rewards_app-apks
+          path: |
+            microsoft_rewards_app/build/app/outputs/flutter-apk/app-armeabi-v7a-debug.apk
+            microsoft_rewards_app/build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk
