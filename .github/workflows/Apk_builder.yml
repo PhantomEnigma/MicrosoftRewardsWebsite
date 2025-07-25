@@ -30,7 +30,7 @@ jobs:
 
       - name: Build APKs for ARMv7 and ARM64
         working-directory: microsoft_rewards_app
-        run: flutter build apk --split-per-abi --debug
+        run: flutter build apk --split-per-abi --release
 
       - name: Upload APKs as artifacts
         uses: actions/upload-artifact@v4
