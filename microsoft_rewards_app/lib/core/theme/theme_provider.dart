@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/constants/app_constants.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.system;
+  ThemeMode _themeMode = ThemeMode.dark;
 
   ThemeMode get themeMode => _themeMode;
 
