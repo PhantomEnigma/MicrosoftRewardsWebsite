@@ -37,5 +37,5 @@ jobs:
         with:
           name: microsoft_rewards_app-apks
           path: |
-            microsoft_rewards_app/build/app/outputs/flutter-apk/app-armeabi-v7a-debug.apk
-            microsoft_rewards_app/build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk
+            microsoft_rewards_app/build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+            microsoft_rewards_app/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
