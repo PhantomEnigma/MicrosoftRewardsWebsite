@@ -11,6 +11,7 @@ import '../../../../notifications/notification_service.dart';
 import '../bloc/search_bloc.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/strings.dart';
+import 'settings_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
@@ -32,24 +33,33 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Builder(
-          builder: (context) {
-            final isSmallScreen = MediaQuery.of(context).size.width < 365;
-            return isSmallScreen
-                ? const Text(Strings.appTitle)
-                : Row(
+  title: Builder(
+    builder: (context) {
+      final isSmallScreen = MediaQuery.of(context).size.width < 365;
+      return isSmallScreen
+          ? const Text(Strings.appTitle)
+          : Row(
               children: [
-                Image.asset(
-                  'assets/images/microsoft.png',
-                  height: 32,
-                ),
+                Image.asset('assets/images/microsoft.png', height: 32),
                 const SizedBox(width: 10),
                 const Text(Strings.appTitle),
               ],
             );
-          },
-        ),
-      ),
+    },
+  ),
+  actions: [
+    IconButton(
+      icon: const Icon(Icons.settings),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SettingsScreen()),
+        );
+      },
+    ),
+  ],
+),
+
       body: Stack(
         children: [
           Padding(
@@ -281,95 +291,8 @@ class SearchFormState extends State<SearchForm> {
             keyboardType: TextInputType.number,
             validator: InputValidators.validateDelay,
           ),
-          SwitchListTile(
-            title: const Text("Dark Mode"),
-            value: Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark,
-            onChanged: (value) {
-              Provider.of<ThemeProvider>(context, listen: false).toggleTheme(value);
-            },
-          ),
-          Row(
-            children: [
-              Checkbox(
-                value: _sendDailyReminder,
-                onChanged: (value) async {
-                  setState(() => _sendDailyReminder = value!);
-                  final prefs = await SharedPreferences.getInstance();
-                  prefs.setBool('send_daily_reminder', value!);
+          
 
-                  if (value) {
-                    await NotificationService.scheduleDailyReminder(hour: _selectedTime.hour, minute: _selectedTime.minute);
-                  } else {
-                    await NotificationService.cancelReminder();
-                  }
-                },
-              ),
-              Expanded(
-                child: InkWell(
-                  onTap: () => _selectTime(context),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Daily reminder at ',
-                        style: TextStyle(
-                          color: _sendDailyReminder ? Colors.blue : Colors.grey,
-                          decoration: TextDecoration.none,
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: _sendDailyReminder ? Colors.blue : Colors.grey,
-                              width: 1.0,
-                            ),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              _selectedTime.format(context),
-                              style: TextStyle(
-                                color: _sendDailyReminder ? Colors.blue : Colors.grey,
-                                decoration: TextDecoration.none,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Icon(
-                              Icons.access_time,
-                              color: _sendDailyReminder ? Colors.blue : Colors.grey,
-                              size: 20,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                ),
-              ),
-            ],
-          ),
-          Row (
-            children: [
-              Checkbox(
-                  value: _keepScreenOn,
-                  onChanged: (value) async {
-                    setState(() => _keepScreenOn = value!);
-                    final prefs = await SharedPreferences.getInstance();
-                    prefs.setBool('keep_screen_on', value!);
-                  },
-              ),
-              Text(
-                'Keep screen on during search',
-                style: TextStyle(
-                  color: _keepScreenOn ? Colors.blue : Colors.grey,
-                  decoration: TextDecoration.none,
-                ),
-              ),
-            ],
-          ),
           if (!_loggedIn) ...[
             Row(
               children: [
