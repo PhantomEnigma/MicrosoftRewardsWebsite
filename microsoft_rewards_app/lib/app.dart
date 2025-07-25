@@ -14,49 +14,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context); // Read current theme
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
       title: Strings.appTitle,
-      themeMode: themeProvider.themeMode, // Enable dynamic switching
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppConstants.primary,
-          primary: AppConstants.primary,
-          onPrimary: AppConstants.onPrimary,
-          background: AppConstants.background,
-          error: AppConstants.error,
-        ),
-        useMaterial3: true,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: AppConstants.primary,
-          foregroundColor: AppConstants.onPrimary,
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppConstants.primary,
-            foregroundColor: AppConstants.onPrimary,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          ),
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: AppConstants.primary,
-          ),
-        ),
-        snackBarTheme: SnackBarThemeData(
-          backgroundColor: AppConstants.primary,
-          contentTextStyle: const TextStyle(color: AppConstants.onPrimary),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          behavior: SnackBarBehavior.floating,
-        ),
-        progressIndicatorTheme: const ProgressIndicatorThemeData(
-          color: AppConstants.primary,
-          linearTrackColor: AppConstants.progressBackground,
-        ),
-      ),
-      darkTheme: ThemeData.dark(),
+      themeMode: themeProvider.themeMode,
+      theme: themeProvider.lightTheme,
+      darkTheme: themeProvider.darkTheme,
       home: BlocProvider(
         create: (context) => sl<SearchBloc>(),
         child: const StartupScreen(),
@@ -65,3 +29,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
