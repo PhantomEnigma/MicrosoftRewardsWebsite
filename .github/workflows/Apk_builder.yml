@@ -2,9 +2,9 @@ name: Build Flutter APK
 
 on:
   push:
-    branches: [ master ]
+    branches: [ Experimental ]
   pull_request:
-    branches: [ master ]
+    branches: [ Experimental ]
 
 jobs:
   build:
