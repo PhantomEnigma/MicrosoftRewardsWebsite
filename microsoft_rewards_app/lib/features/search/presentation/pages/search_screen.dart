@@ -258,9 +258,13 @@ class SearchFormState extends State<SearchForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
+    return SafeArea(
+	child: SingleChildScrollView(
+    padding: const EdgeInsets.only(bottom: 24), // adds scroll padding
+    child: Form(
       key: _formKey,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomTextField(
             controller: _countController,
@@ -487,9 +491,11 @@ class SearchFormState extends State<SearchForm> {
 
             },
           ),
-        ],
+         ],
       ),
-    );
+    ),
+  ),
+);
   }
 
   String _getButtonText(SearchState state) {
