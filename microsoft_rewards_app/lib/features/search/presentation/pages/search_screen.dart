@@ -1,3 +1,5 @@
+import 'package:provider/provider.dart';
+import '../../../../core/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -274,6 +276,13 @@ class SearchFormState extends State<SearchForm> {
             hintText: Strings.delayHint,
             keyboardType: TextInputType.number,
             validator: InputValidators.validateDelay,
+          ),
+          SwitchListTile(
+            title: const Text("Dark Mode"),
+            value: Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark,
+            onChanged: (value) {
+              Provider.of<ThemeProvider>(context, listen: false).toggleTheme(value);
+            },
           ),
           Row(
             children: [
