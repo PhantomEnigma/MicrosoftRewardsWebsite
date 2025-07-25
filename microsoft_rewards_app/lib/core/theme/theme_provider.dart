@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../core/constants/app_constants.dart';
+import '../constants/app_constants.dart';
 
 class ThemeProvider extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.dark;
