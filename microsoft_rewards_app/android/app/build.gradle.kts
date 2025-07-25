@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.spin311.microsoft_automatic_rewards"
+    namespace = "com.spin311.microsoft_automatic_rewards_experimental"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
