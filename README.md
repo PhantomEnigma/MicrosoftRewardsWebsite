@@ -2,5 +2,5 @@ This project is just a fork of https://github.com/spin311/MicrosoftRewardsWebsit
 - If you like this project make sure to give a star on original repository :)
 
 Features added
-- Amoled dark theme.
+- Amoled dark theme to the android app.
 
