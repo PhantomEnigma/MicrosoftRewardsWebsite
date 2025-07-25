@@ -15,12 +15,12 @@ void main() async {
 
   Bloc.observer = _AppBlocObserver();
 
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(), 
-      child: const MyApp(),
-    ),
-  );
+runApp(
+  ChangeNotifierProvider(
+    create: (_) => ThemeProvider(),
+    child: const MyApp(),
+  ),
+);
 }
 
 class _AppBlocObserver extends BlocObserver {
