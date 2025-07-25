@@ -12,6 +12,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  bool _darkMode = false;
   bool _sendDailyReminder = false;
   bool _keepScreenOn = false;
   TimeOfDay _selectedTime = const TimeOfDay(hour: 19, minute: 0);
@@ -19,12 +20,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadPrefs();
+    _loadSettings();
   }
 
-  Future<void> _loadPrefs() async {
+  Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
+    final themeMode = Provider.of<ThemeProvider>(context, listen: false).themeMode;
     setState(() {
+      _darkMode = themeMode == ThemeMode.dark;
       _sendDailyReminder = prefs.getBool('send_daily_reminder') ?? false;
       _keepScreenOn = prefs.getBool('keep_screen_on') ?? false;
       _selectedTime = TimeOfDay(
@@ -34,70 +37,76 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  Future<void> _saveReminder(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('send_daily_reminder', value);
+    setState(() => _sendDailyReminder = value);
+
+    if (value) {
+      await NotificationService.scheduleDailyReminder(hour: _selectedTime.hour, minute: _selectedTime.minute);
+    } else {
+      await NotificationService.cancelReminder();
+    }
+  }
+
+  Future<void> _saveKeepScreenOn(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('keep_screen_on', value);
+    setState(() => _keepScreenOn = value);
+  }
+
   Future<void> _selectTime(BuildContext context) async {
-    final pickedTime = await showTimePicker(
+    final picked = await showTimePicker(
       context: context,
       initialTime: _selectedTime,
     );
-    if (pickedTime != null && pickedTime != _selectedTime) {
-      setState(() => _selectedTime = pickedTime);
+    if (picked != null) {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('reminder_hour', pickedTime.hour);
-      await prefs.setInt('reminder_minute', pickedTime.minute);
+      prefs.setInt('reminder_hour', picked.hour);
+      prefs.setInt('reminder_minute', picked.minute);
+      setState(() => _selectedTime = picked);
+
       if (_sendDailyReminder) {
-        await NotificationService.scheduleDailyReminder(
-          hour: pickedTime.hour,
-          minute: pickedTime.minute,
-        );
+        await NotificationService.scheduleDailyReminder(hour: picked.hour, minute: picked.minute);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(
+        title: const Text("Settings"),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           SwitchListTile(
             title: const Text("Dark Mode"),
-            value: Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark,
+            value: _darkMode,
             onChanged: (value) {
-              Provider.of<ThemeProvider>(context, listen: false).toggleTheme(value);
+              setState(() => _darkMode = value);
+              themeProvider.toggleTheme(value);
             },
           ),
           SwitchListTile(
             title: const Text("Send Daily Reminder"),
             value: _sendDailyReminder,
-            onChanged: (value) async {
-              setState(() => _sendDailyReminder = value);
-              final prefs = await SharedPreferences.getInstance();
-              prefs.setBool('send_daily_reminder', value);
-              if (value) {
-                await NotificationService.scheduleDailyReminder(
-                  hour: _selectedTime.hour,
-                  minute: _selectedTime.minute,
-                );
-              } else {
-                await NotificationService.cancelReminder();
-              }
-            },
+            onChanged: _saveReminder,
           ),
-          ListTile(
-            title: const Text("Reminder Time"),
-            subtitle: Text(_selectedTime.format(context)),
-            trailing: const Icon(Icons.access_time),
-            onTap: () => _selectTime(context),
-          ),
+          if (_sendDailyReminder)
+            ListTile(
+              title: const Text("Reminder Time"),
+              subtitle: Text(_selectedTime.format(context)),
+              trailing: const Icon(Icons.access_time),
+              onTap: () => _selectTime(context),
+            ),
           SwitchListTile(
-            title: const Text("Keep screen on during search"),
+            title: const Text("Keep Screen On"),
             value: _keepScreenOn,
-            onChanged: (value) async {
-              setState(() => _keepScreenOn = value);
-              final prefs = await SharedPreferences.getInstance();
-              prefs.setBool('keep_screen_on', value);
-            },
+            onChanged: _saveKeepScreenOn,
           ),
         ],
       ),
