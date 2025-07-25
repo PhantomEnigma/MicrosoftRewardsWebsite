@@ -80,7 +80,7 @@ class _SearchScreenState extends State<SearchScreen> {
           // Bottom row positioned
           if (!isKeyboardVisible)
             Positioned(
-              bottom: 12,
+              bottom: 24,
               left: 0,
               right: 0,
               child: Row(
@@ -276,6 +276,7 @@ class SearchFormState extends State<SearchForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+	const SizedBox(height: 16),
           CustomTextField(
             controller: _countController,
             labelText: Strings.searchCountLabel,
@@ -322,11 +323,13 @@ class SearchFormState extends State<SearchForm> {
               ],
             )
           ],
+	
           BlocBuilder<SearchBloc, SearchState>(
             builder: (context, state) {
               final isInProgress = state is SearchInProgress;
               return Column(
                 children: [
+		  const SizedBox(height: 20), 
                   CustomButton(
                     onPressed: isInProgress ? _cancelSearch : _startSearch,
                     text: _getButtonText(state),
